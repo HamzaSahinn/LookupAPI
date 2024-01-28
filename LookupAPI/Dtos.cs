@@ -69,4 +69,16 @@ namespace LookupAPI
         [Range(1, 500)] decimal Price,
         DateTime ReleaseDate
     );
+
+    public record LoginDto(
+        [Required]string? Email,
+        [Required]string? Password
+        );
+
+    public record RegisterDto(
+        [Required]string? Email,
+        [Required]string? Password,
+        [Required][StringLength(100)] string? FirstName,
+        [Required][StringLength(100)] string? LastName
+        );
 }

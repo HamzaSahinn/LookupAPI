@@ -1,10 +1,12 @@
 ﻿using LookupAPI.Entities;
 using LookupAPI.Repositories.FilmRepos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LookupAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FilmController : ControllerBase
