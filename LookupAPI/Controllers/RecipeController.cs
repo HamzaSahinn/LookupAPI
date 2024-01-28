@@ -65,7 +65,7 @@ namespace LookupAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DelteFilmById(int id)
+        public async Task<ActionResult> DelteRecipeById(int id)
         {
             if (_RecipeContext == null)
             {
@@ -83,7 +83,7 @@ namespace LookupAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<RecipeDto>> UpdateFilm(int id, [FromBody] UpdateRecipeDto recipe)
+        public async Task<ActionResult<RecipeDto>> UpdateRecipe(int id, [FromBody] UpdateRecipeDto recipe)
         {
             if (_RecipeContext == null)
             {

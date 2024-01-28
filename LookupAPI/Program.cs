@@ -1,5 +1,6 @@
 using LookupAPI.Contexts;
 using LookupAPI.Repositories.FilmRepos;
+using LookupAPI.Repositories.GameRepos;
 using LookupAPI.Repositories.RecipeRepos;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,7 @@ builder.Services.AddDbContext<LookupDbContextInMem>();
 
 builder.Services.AddScoped<IFilmRepository, FilmRepository>();
 builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+builder.Services.AddScoped<IGameRepository, GameRepository>();
 
 // Add services to the container.
 

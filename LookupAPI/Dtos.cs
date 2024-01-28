@@ -46,4 +46,27 @@ namespace LookupAPI
         [Required][StringLength(500)] string RecipeDescription
         );
 
+
+
+    public record GameDto(
+        int Id,
+        string Name,
+        string Genre,
+        decimal Price,
+        DateTime ReleaseDate
+    );
+
+    public record CreateGameDto(
+        [Required][StringLength(50)] string Name,
+        [Required][StringLength(20)] string Genre,
+        [Range(1, 500)] decimal Price,
+        DateTime ReleaseDate
+    );
+
+    public record UpdateGameDto(
+        [Required][StringLength(50)] string Name,
+        [Required][StringLength(20)] string Genre,
+        [Range(1, 500)] decimal Price,
+        DateTime ReleaseDate
+    );
 }
