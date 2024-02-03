@@ -2,7 +2,9 @@
 using LookupAPI.Repositories.FilmRepos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LookupAPI.Controllers
 {
@@ -12,16 +14,21 @@ namespace LookupAPI.Controllers
     public class FilmController : ControllerBase
     {
         private readonly IFilmRepository _FilmContext;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public FilmController(IFilmRepository filmContext)
+        public FilmController(IFilmRepository filmContext, UserManager<ApplicationUser> userManager,
+            IConfiguration configuration)
         {
             _FilmContext = filmContext;
+            _userManager = userManager;
+            _configuration = configuration;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FilmDto>>> Get([FromQuery] string? Name)
         {
-            if(_FilmContext == null)
+            if (_FilmContext == null)
             {
                 return NotFound();
             }
@@ -33,7 +40,7 @@ namespace LookupAPI.Controllers
                 films = films.Where(e => e.Name.Contains(Name)).ToList();
             }
 
-            return Ok(films);
+            return Ok(films.ToList().ConvertAll(e => e.AsDto()));
         }
 
         [HttpPost]
@@ -44,19 +51,27 @@ namespace LookupAPI.Controllers
                 return NotFound();
             }
 
+            var author = await _userManager.FindByIdAsync(User.FindFirstValue("id"));
+            if(author == null)
+            {
+                return BadRequest();
+            }
+
             Film film = new() { 
                 LengthInSeconds = newFilm.LengthInSeconds,
                 Name = newFilm.Name,
                 Category = newFilm.Category,
                 ReleaseDate = newFilm.ReleaseDate,
+                ApplicationUserId = author.Id,
+                ApplicationUser = author,
             };
 
             await _FilmContext.CreateFilmAsync(film);
 
-            return Created();
+            return CreatedAtRoute("getFilmById", new { id = film.Id }, film.AsDto());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "getFilmById")]
         public async Task<ActionResult<Film>> GetFilmById(int id)
         {
             if (_FilmContext == null)

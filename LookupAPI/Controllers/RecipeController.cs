@@ -1,6 +1,8 @@
 ﻿using LookupAPI.Entities;
 using LookupAPI.Repositories.RecipeRepos;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LookupAPI.Controllers
 {
@@ -9,10 +11,15 @@ namespace LookupAPI.Controllers
     public class RecipeController : ControllerBase
     {
         private IRecipeRepository _RecipeContext;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public RecipeController(IRecipeRepository recipeContext)
+        public RecipeController(IRecipeRepository recipeContext, UserManager<ApplicationUser> userManager,
+            IConfiguration configuration)
         {
             _RecipeContext = recipeContext;
+            _userManager = userManager;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -25,7 +32,7 @@ namespace LookupAPI.Controllers
 
             var recipes = await _RecipeContext.GetRecipesAsync();
 
-            return Ok(recipes);
+            return Ok(recipes.ToList().ConvertAll(e=>e.AsDto()));
         }
 
         [HttpPost]
@@ -36,20 +43,28 @@ namespace LookupAPI.Controllers
                 return NotFound();
             }
 
+            var author = await _userManager.FindByIdAsync(User.FindFirstValue("id"));
+            if (author == null)
+            {
+                return BadRequest();
+            }
+
             Recipe recipe = new()
             {
                Ingredients=newRecipe.Ingredients.ToList(),
                Name=newRecipe.Name,
                RecipeDescription=newRecipe.RecipeDescription,
                RequiredTimeIntermsSeconds=newRecipe.RequiredTimeIntermsSeconds,
+               ApplicationUserId=author.Id,
+               ApplicationUser=author
             };
 
             await _RecipeContext.CreateRecipeAsync(recipe);
 
-            return Created();
+            return CreatedAtRoute("getRecipeById", new { id = recipe.Id }, recipe.AsDto());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name ="getRecipeById")]
         public async Task<ActionResult<RecipeDto>> GetRecipeById(int id)
         {
             if (_RecipeContext == null)

@@ -9,7 +9,9 @@
                 film.Name,
                 film.ReleaseDate,
                 film.LengthInSeconds,
-                film.Category
+                film.Category,
+                film.ApplicationUserId,
+                film.ApplicationUser.FirstName + " " + film.ApplicationUser.LastName
                 );
         }
 
@@ -20,7 +22,9 @@
                 recipe.Name,
                 recipe.Ingredients.ToArray(),
                 recipe.RequiredTimeIntermsSeconds,
-                recipe.RecipeDescription
+                recipe.RecipeDescription,
+                recipe.ApplicationUserId,
+                recipe.ApplicationUser.FirstName + " " + recipe.ApplicationUser.LastName
                 );
         }
 
@@ -31,7 +35,9 @@
                 game.Name,
                 game.Genre,
                 game.Price,
-                game.ReleaseDate
+                game.ReleaseDate,
+                game.ApplicationUserId,
+                game.ApplicationUser.FirstName + " " + game.ApplicationUser.LastName
             );
         }
     }

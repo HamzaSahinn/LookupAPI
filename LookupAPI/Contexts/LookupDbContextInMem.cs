@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
+using System.Reflection.Metadata;
 
 namespace LookupAPI.Contexts
 {
@@ -27,7 +28,25 @@ namespace LookupAPI.Contexts
 
             builder.Entity<ApplicationUser>()
                 .Property(e => e.LastName)
-                .HasMaxLength(100);
+            .HasMaxLength(100);
+
+            builder.Entity<Film>()
+                 .HasOne(c => c.ApplicationUser)
+                .WithMany(u => u.Films)
+                .HasForeignKey(c => c.ApplicationUserId)
+                .IsRequired();
+
+            builder.Entity<Game>()
+                 .HasOne(c => c.ApplicationUser)
+                .WithMany(u => u.Games)
+                .HasForeignKey(c => c.ApplicationUserId)
+                .IsRequired();
+
+            builder.Entity<Recipe>()
+                 .HasOne(c => c.ApplicationUser)
+                .WithMany(u => u.Recipes)
+                .HasForeignKey(c => c.ApplicationUserId)
+                .IsRequired();
 
         }
 

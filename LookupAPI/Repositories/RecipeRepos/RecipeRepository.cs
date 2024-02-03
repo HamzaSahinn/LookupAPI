@@ -27,12 +27,12 @@ namespace LookupAPI.Repositories.RecipeRepos
 
         public async Task<Recipe> GetRecipeAsync(int recipeId)
         {
-            return await _context.Recipes.FindAsync(recipeId);
+            return await _context.Recipes.Include(e => e.ApplicationUser).FirstAsync(e=> e.Id == recipeId);
         }
 
         public async Task<IEnumerable<Recipe>> GetRecipesAsync()
         {
-            return await _context.Recipes.AsNoTracking().ToListAsync();
+            return await _context.Recipes.Include(e => e.ApplicationUser).AsNoTracking().ToListAsync();
         }
 
         public async Task UpdateRecipeAsync(Recipe recipe)

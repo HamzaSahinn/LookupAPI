@@ -21,5 +21,9 @@ namespace LookupAPI.Entities
         public decimal Price { get; set; }
 
         public DateTime ReleaseDate { get; set; }
+
+        public string ApplicationUserId { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
+
     }
 }

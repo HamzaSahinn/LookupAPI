@@ -27,22 +27,22 @@ namespace LookupAPI.Repositories.FilmRepos
 
         public async Task<Film> GetFilmAsync(int filmId)
         {
-            return await _context.Films.FindAsync(filmId);
+            return await _context.Films.Include(c => c.ApplicationUser).FirstAsync(c=>c.Id==filmId);
         }
 
         public async Task<Film> GetFilmByNameAsync(string name)
         {
-            return await _context.Films.FirstAsync(e => e.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+            return await _context.Films.Include(c =>c.ApplicationUser).FirstAsync(e => e.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public async Task<IEnumerable<Film>> GetFilmsAsync()
         {
-            return await _context.Films.AsNoTracking().ToListAsync();
+            return await _context.Films.Include(c => c.ApplicationUser).AsNoTracking().ToListAsync();
         }
 
         public async Task<IEnumerable<Film>> GetFilmsByCategoryAsync(string category)
         {
-            return await _context.Films.Where(e => e.Category.Equals(category, StringComparison.CurrentCultureIgnoreCase)).AsNoTracking().ToListAsync();
+            return await _context.Films.Include(c => c.ApplicationUser).Where(e => e.Category.Equals(category, StringComparison.CurrentCultureIgnoreCase)).AsNoTracking().ToListAsync();
         }
 
         public async Task UpdateFilmAsync(Film film)

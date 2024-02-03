@@ -27,12 +27,12 @@ namespace LookupAPI.Repositories.GameRepos
 
         public async Task<Game> GetGameAsync(int gameId)
         {
-            return await _context.Games.FindAsync(gameId);
+            return await _context.Games.Include(e=>e.ApplicationUser).FirstAsync(e=>e.Id == gameId);
         }
 
         public async Task<IEnumerable<Game>> GetGamesAsync()
         {
-            return await _context.Games.AsNoTracking().ToListAsync();
+            return await _context.Games.Include(e => e.ApplicationUser).AsNoTracking().ToListAsync();
         }
 
         public async Task UpdateGameAsync(Game game)

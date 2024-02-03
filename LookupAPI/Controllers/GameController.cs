@@ -2,7 +2,9 @@
 using LookupAPI.Repositories.GameRepos;
 using LookupAPI.Repositories.RecipeRepos;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LookupAPI.Controllers
 {
@@ -11,10 +13,15 @@ namespace LookupAPI.Controllers
     public class GameController : ControllerBase
     {
         private IGameRepository _GameContext;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public GameController(IGameRepository gameRepository)
+        public GameController(IGameRepository gameRepository, UserManager<ApplicationUser> userManager,
+            IConfiguration configuration)
         {
             _GameContext = gameRepository;
+            _userManager = userManager;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -27,7 +34,7 @@ namespace LookupAPI.Controllers
 
             var games = await _GameContext.GetGamesAsync();
 
-            return Ok(games);
+            return Ok(games.ToList().ConvertAll(e=>e.AsDto()));
         }
 
         [HttpPost]
@@ -38,20 +45,28 @@ namespace LookupAPI.Controllers
                 return NotFound();
             }
 
+            var author = await _userManager.FindByIdAsync(User.FindFirstValue("id"));
+            if (author == null)
+            {
+                return BadRequest();
+            }
+
             Game game= new()
             {
                 Genre = newGame.Genre,
                 Name = newGame.Name,
                 Price = newGame.Price,
                 ReleaseDate = newGame.ReleaseDate,
+                ApplicationUserId=author.Id,
+                ApplicationUser=author
             };
 
             await _GameContext.CreateGameAsync(game);
 
-            return Created();
+            return CreatedAtRoute("getGameById", new { id = game.Id }, game.AsDto());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "getGameById")]
         public async Task<ActionResult<GameDto>> GetGameById(int id)
         {
             if (_GameContext == null)

@@ -7,7 +7,9 @@ namespace LookupAPI
         string Name,
         DateTime ReleaseDate,
         int LengthInSeconds,
-        string Category
+        string Category,
+        string ApplicationUserId,
+        string ApplicationUserName
         );
 
     public record CreateFilmDto(
@@ -21,7 +23,8 @@ namespace LookupAPI
         [Required][StringLength(50)] string Name,
         [Required] DateTime ReleaseDate,
         [Required][Range(1, Int32.MaxValue - 1)] int LengthInSeconds,
-        [Required][StringLength(25)] string Category
+        [Required][StringLength(25)] string Category,
+        [Required] string ApplicationUserId
         );
 
     public record RecipeDto(
@@ -29,7 +32,9 @@ namespace LookupAPI
         string Name,
         string[] Ingredients,
         int RequiredTimeIntermsSeconds,
-        string RecipeDescription
+        string RecipeDescription,
+        string ApplicationUserId,
+        string ApplicationUserName
         );
 
     public record CreateRecipeDto(
@@ -53,7 +58,9 @@ namespace LookupAPI
         string Name,
         string Genre,
         decimal Price,
-        DateTime ReleaseDate
+        DateTime ReleaseDate,
+        string ApplicationUserId,
+        string ApplicationUserName
     );
 
     public record CreateGameDto(

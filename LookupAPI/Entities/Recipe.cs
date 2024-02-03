@@ -22,5 +22,8 @@ namespace LookupAPI.Entities
         [Required]
         [StringLength(500)]
         public string? RecipeDescription {  get; set; }
+
+        public string ApplicationUserId { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
     }
 }

@@ -23,5 +23,9 @@ namespace LookupAPI.Entities
         [Required]
         [StringLength(25)]
         public string? Category { get; set; }
+        
+        public string ApplicationUserId { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
+
     }
 }

@@ -36,8 +36,10 @@ namespace LookupAPI.Controllers
 
                 var authClaims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.FirstName),
-                    new Claim(ClaimTypes.Surname, user.LastName),
+                    new Claim("firstName", user.FirstName),
+                    new Claim("lastName", user.LastName),
+                    new Claim("id",user.Id),
+                    new Claim("email",user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
