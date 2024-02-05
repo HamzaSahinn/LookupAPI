@@ -17,5 +17,7 @@ namespace LookupAPI.Repositories.FilmRepos
         public Task DeleteFilmAsync(int id);
 
         public Task CreateFilmAsync(Film film);
+
+        public Task<int> CountAsync();
     }
 }

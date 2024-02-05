@@ -13,5 +13,8 @@ namespace LookupAPI.Repositories.RecipeRepos
         public Task DeleteRecipeAsync(int id);
 
         public Task CreateRecipeAsync(Recipe recipe);
+
+        public Task<int> CountAsync();
+
     }
 }

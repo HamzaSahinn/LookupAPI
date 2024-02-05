@@ -13,6 +13,11 @@ namespace LookupAPI.Repositories.GameRepos
             _context = context;
         }
 
+        public async Task<int> CountAsync()
+        {
+            return await _context.Games.CountAsync();        
+        }
+
         public async Task CreateGameAsync(Game game)
         {
             _context.Games.AddAsync(game);

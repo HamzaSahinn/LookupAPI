@@ -24,15 +24,36 @@ namespace LookupAPI.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<GameDto>>> Get()
+        [HttpGet("count")]
+        public async Task<ActionResult<int>> GetCount()
         {
             if (_GameContext == null)
             {
                 return NotFound();
             }
 
+            return Ok(await _GameContext.CountAsync());
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<GameDto>>> Get([FromQuery] string? Name, [FromQuery] int? Page, [FromQuery] int? Count)
+        {
+            if (_GameContext == null)
+            {
+                return NotFound();
+            }
+
+            int page = Page == null ? 1 : (int)Page;
+            int count = Count == null ? 16 : (int)Count;
+
             var games = await _GameContext.GetGamesAsync();
+
+            if (Name != null)
+            {
+                games = games.Where(e => e.Name.Contains(Name)).ToList();
+            }
+
+            games = games.Skip((page - 1) * count);
 
             return Ok(games.ToList().ConvertAll(e=>e.AsDto()));
         }

@@ -13,6 +13,12 @@ namespace LookupAPI.Repositories.RecipeRepos
             this._context = context;
         }
 
+        public async Task<int> CountAsync()
+        {
+            return await _context.Recipes.CountAsync();
+
+        }
+
         public async Task CreateRecipeAsync(Recipe recipe)
         {
             _context.Recipes.AddAsync(recipe);

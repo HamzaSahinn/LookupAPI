@@ -13,6 +13,11 @@ namespace LookupAPI.Repositories.FilmRepos
             this._context = context;
         }
 
+        public async Task<int> CountAsync()
+        {
+            return await _context.Films.CountAsync();
+        }
+
         public async Task CreateFilmAsync(Film film)
         {
             _context.Films.AddAsync(film);

@@ -22,15 +22,36 @@ namespace LookupAPI.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<RecipeDto>>> Get() 
+        [HttpGet("count")]
+        public async Task<ActionResult<int>> GetCount()
         {
             if (_RecipeContext == null)
             {
                 return NotFound();
             }
 
+            return Ok(await _RecipeContext.CountAsync());
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<RecipeDto>>> Get([FromQuery] string? Name, [FromQuery] int? Page, [FromQuery] int? Count) 
+        {
+            if (_RecipeContext == null)
+            {
+                return NotFound();
+            }
+
+            int page = Page == null ? 1 : (int)Page;
+            int count = Count == null ? 16 : (int)Count;
+
             var recipes = await _RecipeContext.GetRecipesAsync();
+
+            if (Name != null)
+            {
+                recipes = recipes.Where(e => e.Name.Contains(Name)).ToList();
+            }
+
+            recipes = recipes.Skip((page - 1) * count);
 
             return Ok(recipes.ToList().ConvertAll(e=>e.AsDto()));
         }

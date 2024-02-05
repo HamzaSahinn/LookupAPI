@@ -13,5 +13,7 @@ namespace LookupAPI.Repositories.GameRepos
         public Task DeleteGameAsync(int id);
 
         public Task CreateGameAsync(Game game);
+        public Task<int> CountAsync();
+
     }
 }

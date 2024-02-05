@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Security.Claims;
 
 namespace LookupAPI.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FilmController : ControllerBase
@@ -25,24 +25,44 @@ namespace LookupAPI.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<FilmDto>>> Get([FromQuery] string? Name)
+        [HttpGet("count")]
+        public async Task<ActionResult<int>> GetCount()
         {
             if (_FilmContext == null)
             {
                 return NotFound();
             }
 
+            return Ok(await _FilmContext.CountAsync());
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<FilmDto>>> Get([FromQuery] string? Name, [FromQuery] int? Page, [FromQuery] int? Count)
+        {
+            if (_FilmContext == null)
+            {
+                return NotFound();
+            }
+
+
+            int page = Page == null ? 1 : (int)Page;
+            int count  = Count == null ? 16 : (int)Count;
+
             var films = await _FilmContext.GetFilmsAsync();
 
-            if(Name != null)
+
+            if (Name != null)
             {
                 films = films.Where(e => e.Name.Contains(Name)).ToList();
             }
 
+            films = films.Skip((page - 1) * count);
+
             return Ok(films.ToList().ConvertAll(e => e.AsDto()));
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> CreateFilm([FromBody] CreateFilmDto newFilm)
         {
@@ -86,6 +106,7 @@ namespace LookupAPI.Controllers
             return Ok(film.AsDto());
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DelteFilmById(int id)
         {
@@ -104,6 +125,7 @@ namespace LookupAPI.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult<Film>> UpdateFilm(int id, [FromBody] UpdateFilmDto film)
         {
